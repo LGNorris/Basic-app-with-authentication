@@ -113,6 +113,12 @@ app.get('/', function(req, res) {
   });
 });
 
+app.get('/search', checkAuthentication, function(req, res) {
+  res.render('search', {
+    user: req.user
+  })
+})
+
 app.get('/login', function(req, res) {
   res.render('login', {
     user: req.user
@@ -129,6 +135,17 @@ app.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
 });
 
+// Checks if user is logged in
+
+function checkAuthentication(req,res,next){
+  if(req.isAuthenticated()){
+      //req.isAuthenticated() will return true if user is logged in
+      next();
+  } else{
+      res.redirect("/login");
+  }
+}
+
 /* login post route */
 
 app.post('/login', function(req, res, next) {
@@ -139,7 +156,7 @@ app.post('/login', function(req, res, next) {
     }
     req.logIn(user, function(err) {
       if (err) return next (err);
-      return res.redirect('/');
+      return res.redirect('/search');
     });
   })(req, res, next);
 })
